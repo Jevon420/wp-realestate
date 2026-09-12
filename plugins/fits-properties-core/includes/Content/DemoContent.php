@@ -96,16 +96,19 @@ class DemoContent
             [
                 'title' => 'Sarah Mitchell',
                 'bio' => 'Sarah has spent nearly a decade helping families find homes they love, specializing in residential sales across the North and Central zones.',
+                'photo' => 'https://i.pravatar.cc/400?img=47',
                 'meta' => ['fpc_phone' => '(868) 555-0142', 'fpc_specialization' => 'Residential Sales', 'fpc_years_of_experience' => 8, 'fpc_license_number' => 'RE-10234'],
             ],
             [
                 'title' => 'James Carter',
                 'bio' => 'James focuses on luxury properties and commercial real estate, with a track record of closing high-value deals for discerning clients.',
+                'photo' => 'https://i.pravatar.cc/400?img=12',
                 'meta' => ['fpc_phone' => '(868) 555-0198', 'fpc_specialization' => 'Luxury & Commercial', 'fpc_years_of_experience' => 12, 'fpc_license_number' => 'RE-10567'],
             ],
             [
                 'title' => 'Elena Rodriguez',
                 'bio' => 'Elena loves guiding first-time buyers through every step of the process, making a big decision feel simple and stress-free.',
+                'photo' => 'https://i.pravatar.cc/400?img=32',
                 'meta' => ['fpc_phone' => '(868) 555-0176', 'fpc_specialization' => 'First-Time Buyers', 'fpc_years_of_experience' => 5, 'fpc_license_number' => 'RE-10891'],
             ],
         ];
@@ -124,7 +127,6 @@ class DemoContent
             $postId = wp_insert_post([
                 'post_type' => 'agent',
                 'post_title' => $agent['title'],
-                'post_content' => $agent['bio'],
                 'post_status' => 'publish',
             ]);
 
@@ -132,13 +134,11 @@ class DemoContent
                 continue;
             }
 
+            update_post_meta($postId, 'fpc_bio', $agent['bio']);
+            update_post_meta($postId, 'fpc_photo_url', $agent['photo']);
+
             foreach ($agent['meta'] as $key => $value) {
                 update_post_meta($postId, $key, $value);
-            }
-
-            $imageId = PlaceholderImage::create($agent['title'], 600, 600);
-            if ($imageId) {
-                set_post_thumbnail($postId, $imageId);
             }
 
             $ids[] = $postId;
@@ -210,13 +210,14 @@ class DemoContent
             $postId = wp_insert_post([
                 'post_type' => 'property',
                 'post_title' => $property['title'],
-                'post_content' => $property['desc'],
                 'post_status' => 'publish',
             ]);
 
             if (is_wp_error($postId) || !$postId) {
                 continue;
             }
+
+            update_post_meta($postId, 'fpc_description', $property['desc']);
 
             foreach ($property['meta'] as $key => $value) {
                 update_post_meta($postId, $key, $value);
@@ -247,18 +248,14 @@ class DemoContent
                 wp_set_object_terms($postId, $featureIds, 'property_feature');
             }
 
-            $galleryIds = [];
-            for ($i = 1; $i <= 3; $i++) {
-                $imageId = PlaceholderImage::create($property['title'] . ' - Photo ' . $i);
-                if ($imageId) {
-                    $galleryIds[] = $imageId;
-                }
-            }
-
-            if ($galleryIds) {
-                set_post_thumbnail($postId, $galleryIds[0]);
-                update_post_meta($postId, 'fpc_gallery', implode(',', $galleryIds));
-            }
+            $seed = sanitize_title($property['title']);
+            $photoUrls = [
+                "https://picsum.photos/seed/{$seed}-1/1200/800",
+                "https://picsum.photos/seed/{$seed}-2/1200/800",
+                "https://picsum.photos/seed/{$seed}-3/1200/800",
+            ];
+            update_post_meta($postId, 'fpc_featured_image_url', $photoUrls[0]);
+            update_post_meta($postId, 'fpc_gallery_urls', implode("\n", $photoUrls));
 
             $summary['properties']++;
         }
@@ -281,7 +278,6 @@ class DemoContent
             $postId = wp_insert_post([
                 'post_type' => 'testimonial',
                 'post_title' => $testimonial['title'],
-                'post_content' => $testimonial['content'],
                 'post_status' => 'publish',
             ]);
 
@@ -289,6 +285,7 @@ class DemoContent
                 continue;
             }
 
+            update_post_meta($postId, 'fpc_testimonial_text', $testimonial['content']);
             update_post_meta($postId, 'fpc_rating', $testimonial['rating']);
 
             if (!empty($agentIds[$index])) {

@@ -9,11 +9,12 @@ if (!defined('ABSPATH')) {
 $propertyId = get_the_ID();
 $specs = fp_property_specs($propertyId);
 $listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
+$imageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'medium_large');
 ?>
 <article class="fp-card">
     <a class="fp-card__media" href="<?php the_permalink(); ?>">
-        <?php if (has_post_thumbnail()) : ?>
-            <?php the_post_thumbnail('medium_large'); ?>
+        <?php if ($imageHtml) : ?>
+            <?php echo $imageHtml; ?>
         <?php else : ?>
             <div class="fp-card__media-placeholder"></div>
         <?php endif; ?>

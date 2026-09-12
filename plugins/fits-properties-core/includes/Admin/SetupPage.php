@@ -75,7 +75,7 @@ class SetupPage
             <div class="fpc-setup-cards">
                 <div class="fpc-setup-card">
                     <h2>1. Sample Data</h2>
-                    <p>Adds demo properties, agents, testimonials, and starter pages (About, Contact, Privacy, Terms) with placeholder photos — so the site looks complete right away. Safe to click more than once; it won't duplicate anything that already exists by name.</p>
+                    <p>Adds demo properties, agents, testimonials, and starter pages (About, Contact, Privacy, Terms) with linked stock photos — so the site looks complete right away. Safe to click more than once; it won't duplicate anything that already exists by name.</p>
                     <form method="post">
                         <?php wp_nonce_field(self::NONCE_ACTION, 'fpc_nonce'); ?>
                         <input type="hidden" name="fpc_action" value="install_demo_content">

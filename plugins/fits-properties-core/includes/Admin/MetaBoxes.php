@@ -18,11 +18,13 @@ class MetaBoxes
 
     public function addMetaBoxes()
     {
+        add_meta_box('fpc_property_description', 'Description', [$this, 'renderPropertyDescription'], 'property', 'normal', 'high');
         add_meta_box('fpc_property_listing', 'Listing & Pricing', [$this, 'renderPropertyListing'], 'property', 'normal', 'high');
         add_meta_box('fpc_property_specs', 'Specifications', [$this, 'renderPropertySpecs'], 'property', 'normal', 'default');
         add_meta_box('fpc_property_address', 'Address & Map Location', [$this, 'renderPropertyAddress'], 'property', 'normal', 'default');
-        add_meta_box('fpc_property_gallery', 'Photo Gallery', [$this, 'renderGallery'], 'property', 'side', 'high');
+        add_meta_box('fpc_property_gallery', 'Photos', [$this, 'renderGallery'], 'property', 'side', 'high');
         add_meta_box('fpc_agent_details', 'Agent Details', [$this, 'renderAgent'], 'agent', 'normal', 'high');
+        add_meta_box('fpc_agent_photo', 'Photo', [$this, 'renderAgentPhoto'], 'agent', 'side', 'high');
         add_meta_box('fpc_testimonial_details', 'Testimonial Details', [$this, 'renderTestimonial'], 'testimonial', 'normal', 'high');
     }
 
@@ -48,11 +50,31 @@ class MetaBoxes
         echo '<p class="fpc-intro">' . esc_html($text) . '</p>';
     }
 
+    private function textarea($id, $name, $value, $rows = 6, $placeholder = '')
+    {
+        printf(
+            '<textarea id="%1$s" name="%2$s" rows="%3$d" class="large-text" placeholder="%4$s">%5$s</textarea>',
+            esc_attr($id),
+            esc_attr($name),
+            (int) $rows,
+            esc_attr($placeholder),
+            esc_textarea($value)
+        );
+    }
+
+    /** ---------- Property: Description ---------- */
+
+    public function renderPropertyDescription($post)
+    {
+        $this->nonceField('fpc_save_property');
+        $this->intro('This is the main write-up shown on the property\'s page. Plain text only — press Enter to start a new paragraph.');
+        $this->textarea('fpc_description', 'fpc_description', $this->meta($post->ID, 'fpc_description'), 8, 'Describe the property: what makes it stand out, the neighborhood, recent updates...');
+    }
+
     /** ---------- Property: Listing & Pricing ---------- */
 
     public function renderPropertyListing($post)
     {
-        $this->nonceField('fpc_save_property');
         $this->intro('Choose who this listing belongs to, whether it\'s for sale or rent, and its price. Use the "Property Types", "Locations" and "Features & Amenities" boxes in the sidebar to categorize it.');
 
         $listingType = $this->meta($post->ID, 'fpc_listing_type', 'sale');
@@ -208,8 +230,16 @@ class MetaBoxes
     {
         $ids = get_post_meta($post->ID, 'fpc_gallery', true);
         $ids = $ids ? array_filter(explode(',', $ids)) : [];
+        $coverUrl = $this->meta($post->ID, 'fpc_featured_image_url');
+        $galleryUrls = $this->meta($post->ID, 'fpc_gallery_urls');
         ?>
-        <p class="fpc-intro fpc-intro--tight">Photos shown in the gallery on the property page. Set the main "Featured Image" (below, in the sidebar) separately — that's the cover photo used on listing cards.</p>
+        <p class="fpc-intro fpc-intro--tight">You can upload photos below, or paste image links instead — whichever is easier. Uploaded photos and links can be used together.</p>
+
+        <p class="fpc-field-label">Cover Photo</p>
+        <p class="description">Used on listing cards. Uploading one below as the "Featured Image" takes priority; otherwise this link is used.</p>
+        <input type="url" name="fpc_featured_image_url" value="<?php echo esc_attr($coverUrl); ?>" class="widefat" placeholder="https://example.com/photo.jpg">
+
+        <p class="fpc-field-label" style="margin-top:16px;">Uploaded Photos</p>
         <div id="fpc-gallery-field">
             <input type="hidden" name="fpc_gallery" id="fpc_gallery_ids" value="<?php echo esc_attr(implode(',', $ids)); ?>">
             <div id="fpc-gallery-preview" class="fpc-gallery-preview">
@@ -222,6 +252,10 @@ class MetaBoxes
             <button type="button" class="button button-primary" id="fpc-gallery-add">Add Photos</button>
             <button type="button" class="button" id="fpc-gallery-clear">Clear All</button>
         </div>
+
+        <p class="fpc-field-label" style="margin-top:16px;">Linked Photos</p>
+        <p class="description">One image link per line.</p>
+        <?php $this->textarea('fpc_gallery_urls', 'fpc_gallery_urls', $galleryUrls, 4, "https://example.com/photo1.jpg\nhttps://example.com/photo2.jpg"); ?>
         <?php
     }
 
@@ -230,9 +264,12 @@ class MetaBoxes
     public function renderAgent($post)
     {
         $this->nonceField('fpc_save_agent');
-        $this->intro('Set the agent\'s photo using the "Featured Image" box in the sidebar, and write their bio in the main content editor above.');
+        $this->intro('Fill in their bio and contact details below. Set their photo using the "Photo" box in the sidebar.');
         ?>
-        <table class="form-table fpc-form-table">
+        <p class="fpc-field-label">Bio</p>
+        <?php $this->textarea('fpc_bio', 'fpc_bio', $this->meta($post->ID, 'fpc_bio'), 6, "A short introduction: their experience, specialties, what clients say about working with them..."); ?>
+
+        <table class="form-table fpc-form-table" style="margin-top:8px;">
             <tr>
                 <th><label for="fpc_phone">Phone Number</label></th>
                 <td><input type="text" name="fpc_phone" id="fpc_phone" value="<?php echo esc_attr($this->meta($post->ID, 'fpc_phone')); ?>" class="regular-text"></td>
@@ -264,19 +301,32 @@ class MetaBoxes
         <?php
     }
 
+    public function renderAgentPhoto($post)
+    {
+        $photoUrl = $this->meta($post->ID, 'fpc_photo_url');
+        ?>
+        <p class="description">Upload a photo below as the "Featured Image", or paste a link instead.</p>
+        <p class="fpc-field-label">Photo Link</p>
+        <input type="url" name="fpc_photo_url" value="<?php echo esc_attr($photoUrl); ?>" class="widefat" placeholder="https://example.com/headshot.jpg">
+        <?php
+    }
+
     /** ---------- Testimonial ---------- */
 
     public function renderTestimonial($post)
     {
         $this->nonceField('fpc_save_testimonial');
-        $this->intro('Use the Title field above for the reviewer\'s name, and the main content editor for the testimonial text.');
+        $this->intro('Use the Title field above for the reviewer\'s name.');
 
         $rating = $this->meta($post->ID, 'fpc_rating', '5');
         $relatedId = $this->meta($post->ID, 'fpc_related_post');
 
         $related = get_posts(['post_type' => ['property', 'agent'], 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC']);
         ?>
-        <table class="form-table fpc-form-table">
+        <p class="fpc-field-label">Testimonial Text</p>
+        <?php $this->textarea('fpc_testimonial_text', 'fpc_testimonial_text', $this->meta($post->ID, 'fpc_testimonial_text'), 4, 'What did they say about working with you?'); ?>
+
+        <table class="form-table fpc-form-table" style="margin-top:8px;">
             <tr>
                 <th>Rating</th>
                 <td>
@@ -316,6 +366,10 @@ class MetaBoxes
             return;
         }
 
+        if (isset($_POST['fpc_description'])) {
+            update_post_meta($postId, 'fpc_description', sanitize_textarea_field(wp_unslash($_POST['fpc_description'])));
+        }
+
         $text = [
             'fpc_price', 'fpc_rental_price', 'fpc_lease_term', 'fpc_bedrooms', 'fpc_bathrooms',
             'fpc_garage', 'fpc_area', 'fpc_year_built', 'fpc_address_line', 'fpc_state',
@@ -325,6 +379,16 @@ class MetaBoxes
             if (isset($_POST[$field])) {
                 update_post_meta($postId, $field, sanitize_text_field(wp_unslash($_POST[$field])));
             }
+        }
+
+        if (isset($_POST['fpc_featured_image_url'])) {
+            update_post_meta($postId, 'fpc_featured_image_url', esc_url_raw(wp_unslash($_POST['fpc_featured_image_url'])));
+        }
+
+        if (isset($_POST['fpc_gallery_urls'])) {
+            $urls = preg_split('/\r\n|\r|\n/', wp_unslash($_POST['fpc_gallery_urls']));
+            $urls = array_filter(array_map('esc_url_raw', array_map('trim', $urls)));
+            update_post_meta($postId, 'fpc_gallery_urls', implode("\n", $urls));
         }
 
         if (isset($_POST['fpc_agent_id'])) {
@@ -353,6 +417,14 @@ class MetaBoxes
             return;
         }
 
+        if (isset($_POST['fpc_bio'])) {
+            update_post_meta($postId, 'fpc_bio', sanitize_textarea_field(wp_unslash($_POST['fpc_bio'])));
+        }
+
+        if (isset($_POST['fpc_photo_url'])) {
+            update_post_meta($postId, 'fpc_photo_url', esc_url_raw(wp_unslash($_POST['fpc_photo_url'])));
+        }
+
         $text = [
             'fpc_phone', 'fpc_specialization', 'fpc_years_of_experience', 'fpc_license_number',
             'fpc_facebook_url', 'fpc_twitter_url', 'fpc_instagram_url', 'fpc_linkedin_url',
@@ -368,6 +440,10 @@ class MetaBoxes
     {
         if (!$this->verifyNonce('fpc_save_testimonial') || !current_user_can('edit_post', $postId)) {
             return;
+        }
+
+        if (isset($_POST['fpc_testimonial_text'])) {
+            update_post_meta($postId, 'fpc_testimonial_text', sanitize_textarea_field(wp_unslash($_POST['fpc_testimonial_text'])));
         }
 
         if (isset($_POST['fpc_rating'])) {

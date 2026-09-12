@@ -9,7 +9,8 @@ while (have_posts()) :
     the_post();
 
     $propertyId = get_the_ID();
-    $galleryIds = fp_property_gallery_ids($propertyId);
+    $galleryItems = fp_gallery_items($propertyId);
+    $mainImageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'large', ['id' => 'fp-gallery-main']);
     $specs = fp_property_specs($propertyId);
     $listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
     $features = get_the_terms($propertyId, 'property_feature');
@@ -23,23 +24,21 @@ while (have_posts()) :
     <section class="fp-property-gallery">
         <div class="fp-container">
             <div class="fp-property-gallery__main">
-                <?php if (has_post_thumbnail()) : ?>
-                    <?php the_post_thumbnail('large', ['id' => 'fp-gallery-main']); ?>
-                <?php elseif ($galleryIds) : ?>
-                    <?php echo wp_get_attachment_image($galleryIds[0], 'large', false, ['id' => 'fp-gallery-main']); ?>
+                <?php if ($mainImageHtml) : ?>
+                    <?php echo $mainImageHtml; ?>
+                <?php elseif (!empty($galleryItems)) : ?>
+                    <?php echo fp_gallery_item_thumb_html($galleryItems[0], [1200, 800]); ?>
                 <?php else : ?>
                     <div class="fp-card__media-placeholder" style="height:420px;"></div>
                 <?php endif; ?>
             </div>
-            <?php if (!empty($galleryIds)) : ?>
+            <?php if (!empty($galleryItems)) : ?>
                 <div class="fp-property-gallery__thumbs">
-                    <?php foreach ($galleryIds as $id) : ?>
-                        <?php
-                        $full = wp_get_attachment_image_url($id, 'large');
-                        if (!$full) { continue; }
-                        ?>
+                    <?php foreach ($galleryItems as $item) : ?>
+                        <?php $full = fp_gallery_item_full_url($item); ?>
+                        <?php if (!$full) { continue; } ?>
                         <button type="button" class="fp-gallery-thumb" data-full="<?php echo esc_url($full); ?>">
-                            <?php echo wp_get_attachment_image($id, 'thumbnail'); ?>
+                            <?php echo fp_gallery_item_thumb_html($item, [70, 56]); ?>
                         </button>
                     <?php endforeach; ?>
                 </div>
@@ -68,7 +67,7 @@ while (have_posts()) :
 
                 <div class="fp-property-description">
                     <h2>Description</h2>
-                    <?php the_content(); ?>
+                    <?php echo fp_rich_text($propertyId, 'fpc_description'); ?>
                 </div>
 
                 <?php if (!empty($features) && !is_wp_error($features)) : ?>
@@ -97,9 +96,7 @@ while (have_posts()) :
             <aside class="fp-property-sidebar">
                 <?php if ($agent) : ?>
                     <div class="fp-agent-mini">
-                        <?php if (has_post_thumbnail($agent->ID)) : ?>
-                            <?php echo get_the_post_thumbnail($agent->ID, 'thumbnail'); ?>
-                        <?php endif; ?>
+                        <?php echo fp_featured_image_html($agent->ID, 'fpc_photo_url', 'thumbnail'); ?>
                         <h3><a href="<?php echo esc_url(get_permalink($agent)); ?>"><?php echo esc_html($agent->post_title); ?></a></h3>
                         <?php $phone = get_post_meta($agent->ID, 'fpc_phone', true); ?>
                         <?php if ($phone) : ?><p><?php echo esc_html($phone); ?></p><?php endif; ?>

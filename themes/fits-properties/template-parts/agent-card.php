@@ -6,11 +6,12 @@ if (!defined('ABSPATH')) {
 $agentId = get_the_ID();
 $phone = get_post_meta($agentId, 'fpc_phone', true);
 $specialization = get_post_meta($agentId, 'fpc_specialization', true);
+$imageHtml = fp_featured_image_html($agentId, 'fpc_photo_url', 'medium');
 ?>
 <article class="fp-agent-card">
     <a class="fp-agent-card__media" href="<?php the_permalink(); ?>">
-        <?php if (has_post_thumbnail()) : ?>
-            <?php the_post_thumbnail('medium'); ?>
+        <?php if ($imageHtml) : ?>
+            <?php echo $imageHtml; ?>
         <?php else : ?>
             <div class="fp-agent-card__media-placeholder"></div>
         <?php endif; ?>

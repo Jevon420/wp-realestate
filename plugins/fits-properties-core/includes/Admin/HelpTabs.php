@@ -70,9 +70,9 @@ class HelpTabs
                     'content' => '<p><strong>To add a new listing:</strong> click "Add New" at the top of the page.</p>' .
                         '<ol>' .
                         '<li>Enter the property name as the Title (e.g. "3BR House on Maple St").</li>' .
-                        '<li>Write a description in the main text box.</li>' .
-                        '<li>Fill in the "Listing & Pricing", "Specifications" and "Address" boxes below the description.</li>' .
-                        '<li>Add photos in the "Photo Gallery" box, and set a cover photo using "Featured Image" in the right-hand sidebar.</li>' .
+                        '<li>Write a description in the "Description" box.</li>' .
+                        '<li>Fill in the "Listing & Pricing", "Specifications" and "Address" boxes below it.</li>' .
+                        '<li>Add photos in the "Photos" box (sidebar) — upload them, or paste image links if you have photos hosted elsewhere.</li>' .
                         '<li>Choose a Property Type, Location, and any Features in the sidebar.</li>' .
                         '<li>Click "Publish" (or "Update" if editing) when you\'re ready to make it live.</li>' .
                         '</ol>',
@@ -92,7 +92,7 @@ class HelpTabs
             return [
                 [
                     'title' => 'Adding an Agent',
-                    'content' => '<p><strong>To add a team member:</strong> click "Add New", enter their name as the Title, write their bio in the main text box, upload their photo as the "Featured Image" (sidebar), and fill in their phone/social links in the "Agent Details" box.</p>' .
+                    'content' => '<p><strong>To add a team member:</strong> click "Add New", enter their name as the Title, write their bio in the "Agent Details" box, add their photo in the "Photo" box (upload it or paste a link), and fill in their phone/social links.</p>' .
                         '<p>Once saved, you can select this agent as the "Listing Agent" on any property.</p>',
                 ],
             ];
@@ -101,7 +101,7 @@ class HelpTabs
         return [
             [
                 'title' => 'Adding a Testimonial',
-                'content' => '<p>Use the Title field for the reviewer\'s name (e.g. "The Thompson Family") and the main text box for their review. Set a star rating and, optionally, link it to the property or agent it\'s about.</p>',
+                'content' => '<p>Use the Title field for the reviewer\'s name (e.g. "The Thompson Family") and the "Testimonial Text" box for their review. Set a star rating and, optionally, link it to the property or agent it\'s about.</p>',
             ],
         ];
     }

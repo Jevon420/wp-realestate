@@ -13,6 +13,7 @@ use FitsPropertiesCore\Admin\SetupPage;
 use FitsPropertiesCore\Admin\HelpTabs;
 use FitsPropertiesCore\Frontend\ContactForm;
 use FitsPropertiesCore\Updates\UpdateChecker;
+use FitsPropertiesCore\Updates\ContentMigration;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -44,5 +45,6 @@ class Plugin
         (new SetupPage())->register();
         (new HelpTabs())->register();
         (new UpdateChecker())->register();
+        (new ContentMigration())->register();
     }
 }

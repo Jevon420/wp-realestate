@@ -3,10 +3,12 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$rating = get_post_meta(get_the_ID(), 'fpc_rating', true);
+$testimonialId = get_the_ID();
+$rating = get_post_meta($testimonialId, 'fpc_rating', true);
+$text = get_post_meta($testimonialId, 'fpc_testimonial_text', true);
 ?>
 <blockquote class="fp-testimonial">
     <p class="fp-testimonial__stars"><?php echo fp_stars($rating); ?></p>
-    <p class="fp-testimonial__content"><?php the_content(); ?></p>
+    <p class="fp-testimonial__content"><?php echo esc_html($text); ?></p>
     <cite class="fp-testimonial__author"><?php the_title(); ?></cite>
 </blockquote>

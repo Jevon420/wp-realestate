@@ -32,8 +32,12 @@ class PostTypes
             'rewrite' => ['slug' => 'properties', 'with_front' => false],
             'menu_icon' => 'dashicons-admin-multisite',
             'menu_position' => 5,
-            'supports' => ['title', 'editor', 'thumbnail', 'excerpt', 'author'],
-            'show_in_rest' => true,
+            // No 'editor' support and show_in_rest is off on purpose: this
+            // keeps the block editor off the edit screen entirely so a
+            // non-technical user only ever sees the plain form built by
+            // our meta boxes (Title field + Listing/Specs/Address/Photos).
+            'supports' => ['title', 'thumbnail', 'author'],
+            'show_in_rest' => false,
         ]);
     }
 
@@ -54,8 +58,8 @@ class PostTypes
             'rewrite' => ['slug' => 'agents', 'with_front' => false],
             'menu_icon' => 'dashicons-groups',
             'menu_position' => 6,
-            'supports' => ['title', 'editor', 'thumbnail'],
-            'show_in_rest' => true,
+            'supports' => ['title', 'thumbnail'],
+            'show_in_rest' => false,
         ]);
     }
 
@@ -76,8 +80,8 @@ class PostTypes
             'rewrite' => ['slug' => 'testimonials', 'with_front' => false],
             'menu_icon' => 'dashicons-star-filled',
             'menu_position' => 7,
-            'supports' => ['title', 'editor', 'author'],
-            'show_in_rest' => true,
+            'supports' => ['title', 'author'],
+            'show_in_rest' => false,
         ]);
     }
 }

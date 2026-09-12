@@ -11,6 +11,12 @@
     width: 200px;
 }
 
+.fpc-field-label {
+    font-weight: 600;
+    font-size: 13px;
+    margin: 0 0 6px;
+}
+
 .fpc-toggle-group {
     display: flex;
     gap: 10px;

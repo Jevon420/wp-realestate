@@ -28,10 +28,11 @@ while (have_posts()) :
     ]);
     ?>
 
+    <?php $imageHtml = fp_featured_image_html($agentId, 'fpc_photo_url', 'medium'); ?>
     <section class="fp-page-header fp-page-header--agent">
         <div class="fp-container fp-agent-header">
-            <?php if (has_post_thumbnail()) : ?>
-                <div class="fp-agent-header__photo"><?php the_post_thumbnail('medium'); ?></div>
+            <?php if ($imageHtml) : ?>
+                <div class="fp-agent-header__photo"><?php echo $imageHtml; ?></div>
             <?php endif; ?>
             <div>
                 <h1><?php the_title(); ?></h1>
@@ -55,7 +56,7 @@ while (have_posts()) :
     <section class="fp-section">
         <div class="fp-container">
             <div class="fp-property-description">
-                <?php the_content(); ?>
+                <?php echo fp_rich_text($agentId, 'fpc_bio'); ?>
             </div>
         </div>
     </section>

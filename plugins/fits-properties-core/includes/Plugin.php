@@ -12,6 +12,7 @@ use FitsPropertiesCore\Admin\ContactInbox;
 use FitsPropertiesCore\Admin\SetupPage;
 use FitsPropertiesCore\Admin\HelpTabs;
 use FitsPropertiesCore\Frontend\ContactForm;
+use FitsPropertiesCore\Updates\UpdateChecker;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -42,5 +43,6 @@ class Plugin
         (new ContactForm())->register();
         (new SetupPage())->register();
         (new HelpTabs())->register();
+        (new UpdateChecker())->register();
     }
 }

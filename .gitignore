@@ -3,6 +3,7 @@
 /*
 !/plugins
 !/themes
+!/bin
 !/.gitignore
 
 /plugins/*

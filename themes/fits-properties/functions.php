@@ -14,3 +14,4 @@ require_once FP_THEME_DIR . '/inc/helpers.php';
 require_once FP_THEME_DIR . '/inc/queries.php';
 require_once FP_THEME_DIR . '/inc/archive-filters.php';
 require_once FP_THEME_DIR . '/inc/customizer.php';
+require_once FP_THEME_DIR . '/inc/updates.php';

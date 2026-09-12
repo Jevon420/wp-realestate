@@ -1,0 +1,19 @@
+# This repo only tracks our custom plugin and theme, not WordPress core,
+# uploads, or any other bundled plugins/themes in this wp-content folder.
+/*
+!/plugins
+!/themes
+!/.gitignore
+
+/plugins/*
+!/plugins/fits-properties-core
+
+/themes/*
+!/themes/fits-properties
+
+# Runtime/generated
+**/.DS_Store
+**/node_modules/
+uploads/
+upgrade/
+cache/

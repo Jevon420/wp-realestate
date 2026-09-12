@@ -12,6 +12,7 @@ $testimonials = fp_get_testimonials(3);
 
 <section class="fp-hero">
     <div class="fp-container fp-hero__inner">
+        <span class="fp-eyebrow">Real Estate</span>
         <h1>Find Your Next Property with <?php bloginfo('name'); ?></h1>
         <p>Browse homes, apartments and commercial spaces for sale and rent.</p>
 
@@ -31,7 +32,10 @@ $testimonials = fp_get_testimonials(3);
     <section class="fp-section">
         <div class="fp-container">
             <div class="fp-section__head">
-                <h2>Featured Properties</h2>
+                <div>
+                    <span class="fp-eyebrow">Curated Listings</span>
+                    <h2>Featured Properties</h2>
+                </div>
                 <a class="fp-link" href="<?php echo esc_url(get_post_type_archive_link('property')); ?>">View All &rarr;</a>
             </div>
             <div class="fp-grid fp-grid--3">
@@ -47,7 +51,10 @@ $testimonials = fp_get_testimonials(3);
     <section class="fp-section fp-section--muted">
         <div class="fp-container">
             <div class="fp-section__head">
-                <h2>Browse by Property Type</h2>
+                <div>
+                    <span class="fp-eyebrow">Explore</span>
+                    <h2>Browse by Property Type</h2>
+                </div>
             </div>
             <div class="fp-grid fp-grid--4">
                 <?php foreach ($propertyTypes as $type) : ?>
@@ -65,7 +72,10 @@ $testimonials = fp_get_testimonials(3);
     <section class="fp-section">
         <div class="fp-container">
             <div class="fp-section__head">
-                <h2>What Our Clients Say</h2>
+                <div>
+                    <span class="fp-eyebrow">Testimonials</span>
+                    <h2>What Our Clients Say</h2>
+                </div>
             </div>
             <div class="fp-grid fp-grid--3">
                 <?php while ($testimonials->have_posts()) : $testimonials->the_post(); ?>

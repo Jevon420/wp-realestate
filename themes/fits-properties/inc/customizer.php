@@ -17,26 +17,26 @@ add_action('customize_register', function ($wp_customize) {
     $wp_customize->add_section('fp_brand_colors', [
         'title' => 'Brand Colors',
         'priority' => 25,
-        'description' => 'Change the two main colors used across the site (header, buttons, badges).',
+        'description' => 'Change the two main colors used across the site (headings, buttons, footer).',
     ]);
 
     $wp_customize->add_setting('fp_primary_color', [
-        'default' => '#142942',
+        'default' => '#2a2521',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport' => 'refresh',
     ]);
     $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'fp_primary_color', [
-        'label' => 'Primary Color (header, buttons)',
+        'label' => 'Primary Color (headings, buttons, footer)',
         'section' => 'fp_brand_colors',
     ]));
 
     $wp_customize->add_setting('fp_accent_color', [
-        'default' => '#c9a15a',
+        'default' => '#9c4a35',
         'sanitize_callback' => 'sanitize_hex_color',
         'transport' => 'refresh',
     ]);
     $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'fp_accent_color', [
-        'label' => 'Accent Color (highlights, "For Rent" badge)',
+        'label' => 'Accent Color (links, "For Rent" badge)',
         'section' => 'fp_brand_colors',
     ]));
 
@@ -99,8 +99,8 @@ function fp_shade_color($hex, $percent)
 }
 
 add_action('wp_head', function () {
-    $primary = get_theme_mod('fp_primary_color', '#142942');
-    $accent = get_theme_mod('fp_accent_color', '#c9a15a');
+    $primary = get_theme_mod('fp_primary_color', '#2a2521');
+    $accent = get_theme_mod('fp_accent_color', '#9c4a35');
     $primaryDark = fp_shade_color($primary, 0.25);
     $accentDark = fp_shade_color($accent, 0.15);
     ?>

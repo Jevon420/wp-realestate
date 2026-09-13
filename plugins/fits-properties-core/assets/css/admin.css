@@ -116,6 +116,8 @@
 .fpc-setup-card h2 { margin-top: 0; font-size: 16px; }
 .fpc-setup-card .button { margin: 4px 6px 0 0; }
 .fpc-setup-card .button-hero { margin-top: 8px; }
+.fpc-setup-card--wide { grid-column: 1 / -1; max-width: 640px; }
+.fpc-setup-card--wide .fpc-switch { display: flex; }
 
 .fpc-gallery-thumb-wrap .fpc-remove {
     position: absolute;

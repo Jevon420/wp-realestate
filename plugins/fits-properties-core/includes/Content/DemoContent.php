@@ -320,6 +320,11 @@ class DemoContent
                 'slug' => 'terms-of-use',
                 'content' => 'This is placeholder terms of use content. Replace this with your actual terms before the site goes live.',
             ],
+            [
+                'title' => 'Cookie Policy',
+                'slug' => 'cookie-policy',
+                'content' => "This site uses cookies to keep the site working correctly and, if you agree, to understand how the site is used. You can accept or decline non-essential cookies using the banner shown on your first visit.\n\nThis is placeholder cookie policy content. Replace this with your actual policy — listing exactly which cookies are set and by whom — before the site goes live.",
+            ],
         ];
 
         foreach ($pages as $page) {

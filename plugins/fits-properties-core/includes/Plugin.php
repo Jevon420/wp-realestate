@@ -12,6 +12,7 @@ use FitsPropertiesCore\Admin\ContactInbox;
 use FitsPropertiesCore\Admin\SetupPage;
 use FitsPropertiesCore\Admin\HelpTabs;
 use FitsPropertiesCore\Frontend\ContactForm;
+use FitsPropertiesCore\Frontend\CookieConsent;
 use FitsPropertiesCore\Updates\UpdateChecker;
 use FitsPropertiesCore\Updates\ContentMigration;
 
@@ -42,6 +43,7 @@ class Plugin
         (new AdminAssets())->register();
         (new ContactInbox())->register();
         (new ContactForm())->register();
+        (new CookieConsent())->register();
         (new SetupPage())->register();
         (new HelpTabs())->register();
         (new UpdateChecker())->register();

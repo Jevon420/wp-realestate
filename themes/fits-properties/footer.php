@@ -41,6 +41,24 @@
 
     <div class="fp-container fp-footer__bottom">
         <p>&copy; <?php echo esc_html(date('Y')); ?> <?php bloginfo('name'); ?>. All rights reserved.</p>
+
+        <?php
+        $legalPages = [
+            'privacy-policy' => 'Privacy Policy',
+            'terms-of-use' => 'Terms of Use',
+            'cookie-policy' => 'Cookie Policy',
+        ];
+        $legalLinks = [];
+        foreach ($legalPages as $slug => $label) {
+            $page = get_page_by_path($slug);
+            if ($page) {
+                $legalLinks[] = '<a href="' . esc_url(get_permalink($page)) . '">' . esc_html($label) . '</a>';
+            }
+        }
+        ?>
+        <?php if (!empty($legalLinks)) : ?>
+            <p class="fp-footer__legal"><?php echo implode(' <span aria-hidden="true">&middot;</span> ', $legalLinks); ?></p>
+        <?php endif; ?>
     </div>
 </footer>
 

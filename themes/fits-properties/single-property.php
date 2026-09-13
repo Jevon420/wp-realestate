@@ -10,7 +10,7 @@ while (have_posts()) :
 
     $propertyId = get_the_ID();
     $galleryItems = fp_gallery_items($propertyId);
-    $mainImageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'large', ['id' => 'fp-gallery-main']);
+    $mainImageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'large');
     $specs = fp_property_specs($propertyId);
     $listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
     $features = get_the_terms($propertyId, 'property_feature');

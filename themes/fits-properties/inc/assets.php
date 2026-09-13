@@ -16,7 +16,7 @@ add_action('wp_enqueue_scripts', function () {
     wp_enqueue_script('fp-animate', FP_THEME_URI . '/assets/js/animate.js', [], FP_THEME_VERSION, true);
 
     if (is_singular('property')) {
-        wp_enqueue_script('fp-gallery', FP_THEME_URI . '/assets/js/gallery.js', [], FP_THEME_VERSION, true);
+        wp_enqueue_script('fp-lightbox', FP_THEME_URI . '/assets/js/lightbox.js', [], FP_THEME_VERSION, true);
     }
 
     $isPropertyListing = is_post_type_archive('property') || is_tax('location') || is_tax('property_type');

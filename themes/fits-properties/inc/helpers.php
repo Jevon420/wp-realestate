@@ -117,14 +117,37 @@ function fp_rich_text($postId, $metaKey)
 }
 
 /**
+ * Attributes added to every lazy-loaded <img> we output: native lazy
+ * loading, async decoding, and an inline onload that fades the image in
+ * and removes its skeleton placeholder (see .fp-img-wrap in main.css).
+ * Inline is used instead of a JS observer so it works for cards inserted
+ * later by "Load More" without any extra wiring.
+ */
+function fp_lazy_img_attrs($attrs = [])
+{
+    return array_merge([
+        'loading' => 'lazy',
+        'decoding' => 'async',
+        'onload' => "this.closest('.fp-img-wrap').classList.add('is-loaded')",
+    ], $attrs);
+}
+
+function fp_wrap_img($html)
+{
+    return $html ? '<span class="fp-img-wrap">' . $html . '</span>' : '';
+}
+
+/**
  * Cover/featured image markup for a post: prefers the native WordPress
  * Featured Image, falls back to a pasted image URL (fpc_featured_image_url
  * for properties, fpc_photo_url for agents), or '' if neither is set.
  */
 function fp_featured_image_html($postId, $urlMetaKey, $size = 'large', $attrs = [])
 {
+    $attrs = fp_lazy_img_attrs($attrs);
+
     if (has_post_thumbnail($postId)) {
-        return get_the_post_thumbnail($postId, $size, $attrs);
+        return fp_wrap_img(get_the_post_thumbnail($postId, $size, $attrs));
     }
 
     $url = get_post_meta($postId, $urlMetaKey, true);
@@ -138,7 +161,7 @@ function fp_featured_image_html($postId, $urlMetaKey, $size = 'large', $attrs = 
         $attrString .= ' ' . esc_attr($key) . '="' . esc_attr($value) . '"';
     }
 
-    return '<img src="' . esc_url($url) . '" alt="' . esc_attr(get_the_title($postId)) . '"' . $attrString . '>';
+    return fp_wrap_img('<img src="' . esc_url($url) . '" alt="' . esc_attr(get_the_title($postId)) . '"' . $attrString . '>');
 }
 
 /**
@@ -171,10 +194,20 @@ function fp_gallery_items($postId)
 function fp_gallery_item_thumb_html($item, $size = [80, 80])
 {
     if ($item['type'] === 'id') {
-        return wp_get_attachment_image($item['id'], $size, false, ['style' => 'object-fit:cover;']);
+        $attrs = fp_lazy_img_attrs(['style' => 'object-fit:cover;']);
+
+        return fp_wrap_img(wp_get_attachment_image($item['id'], $size, false, $attrs));
     }
 
-    return '<img src="' . esc_url($item['url']) . '" style="width:' . (int) $size[0] . 'px;height:' . (int) $size[1] . 'px;object-fit:cover;">';
+    $style = 'width:' . (int) $size[0] . 'px;height:' . (int) $size[1] . 'px;object-fit:cover;';
+    $attrs = fp_lazy_img_attrs(['style' => $style]);
+
+    $attrString = '';
+    foreach ($attrs as $key => $value) {
+        $attrString .= ' ' . esc_attr($key) . '="' . esc_attr($value) . '"';
+    }
+
+    return fp_wrap_img('<img src="' . esc_url($item['url']) . '"' . $attrString . '>');
 }
 
 function fp_gallery_item_full_url($item)

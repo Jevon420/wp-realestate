@@ -160,15 +160,19 @@ $archiveLink = get_post_type_archive_link('property');
         <div class="fp-listing__results">
             <?php if (have_posts()) : ?>
                 <p class="fp-listing__count"><?php echo esc_html($wp_query->found_posts); ?> propert<?php echo $wp_query->found_posts === 1 ? 'y' : 'ies'; ?> found</p>
-                <div class="fp-grid fp-grid--3">
+                <div class="fp-grid fp-grid--3" id="fp-property-grid">
                     <?php while (have_posts()) : the_post(); ?>
                         <?php get_template_part('template-parts/property-card'); ?>
                     <?php endwhile; ?>
                 </div>
 
-                <div class="fp-pagination">
-                    <?php the_posts_pagination(); ?>
-                </div>
+                <?php if ($wp_query->max_num_pages > 1) : ?>
+                    <div class="fp-load-more">
+                        <button type="button" id="fp-load-more-btn" class="fp-btn fp-btn--primary" data-target="fp-property-grid" data-max-pages="<?php echo (int) $wp_query->max_num_pages; ?>">
+                            Load More
+                        </button>
+                    </div>
+                <?php endif; ?>
             <?php else : ?>
                 <p>No properties matched your search. Try adjusting your filters.</p>
             <?php endif; ?>

@@ -4,21 +4,32 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-add_action('pre_get_posts', function (WP_Query $query) {
-    if (is_admin() || !$query->is_main_query()) {
-        return;
+/**
+ * Builds WP_Query args from a request array (works with $_GET on the page
+ * load, or $_POST forwarded from Load More — same shape either way) so
+ * the property archive/taxonomy pages and the AJAX "Load More" endpoint
+ * always filter identically.
+ *
+ * $applyLocationFilter/$applyTypeFilter are set to false by pre_get_posts
+ * when the main query is already scoped to that taxonomy by the URL
+ * itself (e.g. /location/northgate/), to avoid a redundant/conflicting
+ * tax_query clause; the AJAX handler always leaves them true since it has
+ * no such implicit scoping and must be told explicitly via fp_location/
+ * fp_type (or fp_taxonomy/fp_term for a plain term-archive "Load More").
+ */
+function fp_property_query_args($request, $paged = 1, $applyLocationFilter = true, $applyTypeFilter = true)
+{
+    $args = [
+        'post_type' => 'property',
+        'posts_per_page' => 12,
+        'paged' => $paged,
+    ];
+
+    if (!empty($request['s'])) {
+        $args['s'] = sanitize_text_field($request['s']);
     }
 
-    $isPropertyContext = $query->is_post_type_archive('property') || $query->is_tax('location') || $query->is_tax('property_type');
-
-    if (!$isPropertyContext) {
-        return;
-    }
-
-    $query->set('post_type', 'property');
-    $query->set('posts_per_page', 12);
-
-    $listingType = !empty($_GET['fp_listing_type']) ? sanitize_key($_GET['fp_listing_type']) : '';
+    $listingType = !empty($request['fp_listing_type']) ? sanitize_key($request['fp_listing_type']) : '';
 
     $metaQuery = ['relation' => 'AND'];
 
@@ -29,9 +40,9 @@ add_action('pre_get_posts', function (WP_Query $query) {
         ];
     }
 
-    if (!empty($_GET['fp_min_price']) || !empty($_GET['fp_max_price'])) {
-        $min = !empty($_GET['fp_min_price']) ? (float) $_GET['fp_min_price'] : 0;
-        $max = !empty($_GET['fp_max_price']) ? (float) $_GET['fp_max_price'] : 999999999999;
+    if (!empty($request['fp_min_price']) || !empty($request['fp_max_price'])) {
+        $min = !empty($request['fp_min_price']) ? (float) $request['fp_min_price'] : 0;
+        $max = !empty($request['fp_max_price']) ? (float) $request['fp_max_price'] : 999999999999;
 
         $priceKeys = $listingType === 'rent' ? ['fpc_rental_price'] : ($listingType === 'sale' ? ['fpc_price'] : ['fpc_price', 'fpc_rental_price']);
         $priceClause = count($priceKeys) > 1 ? ['relation' => 'OR'] : [];
@@ -48,25 +59,25 @@ add_action('pre_get_posts', function (WP_Query $query) {
         $metaQuery[] = $priceClause;
     }
 
-    if (!empty($_GET['fp_min_beds'])) {
+    if (!empty($request['fp_min_beds'])) {
         $metaQuery[] = [
             'key' => 'fpc_bedrooms',
-            'value' => (int) $_GET['fp_min_beds'],
+            'value' => (int) $request['fp_min_beds'],
             'type' => 'NUMERIC',
             'compare' => '>=',
         ];
     }
 
-    if (!empty($_GET['fp_min_baths'])) {
+    if (!empty($request['fp_min_baths'])) {
         $metaQuery[] = [
             'key' => 'fpc_bathrooms',
-            'value' => (float) $_GET['fp_min_baths'],
+            'value' => (float) $request['fp_min_baths'],
             'type' => 'NUMERIC',
             'compare' => '>=',
         ];
     }
 
-    if (!empty($_GET['fp_furnished'])) {
+    if (!empty($request['fp_furnished'])) {
         $metaQuery[] = [
             'key' => 'fpc_furnished',
             'value' => 1,
@@ -74,39 +85,39 @@ add_action('pre_get_posts', function (WP_Query $query) {
     }
 
     if (count($metaQuery) > 1) {
-        $query->set('meta_query', $metaQuery);
+        $args['meta_query'] = $metaQuery;
     }
 
     $taxQuery = ['relation' => 'AND'];
 
-    if (!empty($_GET['fp_city']) && !$query->is_tax('location')) {
+    if (!empty($request['fp_city']) && $applyLocationFilter) {
         $taxQuery[] = [
             'taxonomy' => 'location',
             'field' => 'slug',
-            'terms' => sanitize_title($_GET['fp_city']),
+            'terms' => sanitize_title($request['fp_city']),
         ];
-    } elseif (!empty($_GET['fp_location']) && !$query->is_tax('location')) {
+    } elseif (!empty($request['fp_location']) && $applyLocationFilter) {
         // Zones are parent terms; WordPress automatically includes their
         // child cities when matching a hierarchical taxonomy by term.
         $taxQuery[] = [
             'taxonomy' => 'location',
             'field' => 'slug',
-            'terms' => sanitize_title($_GET['fp_location']),
+            'terms' => sanitize_title($request['fp_location']),
         ];
     }
 
-    if (!empty($_GET['fp_type']) && !$query->is_tax('property_type')) {
+    if (!empty($request['fp_type']) && $applyTypeFilter) {
         $taxQuery[] = [
             'taxonomy' => 'property_type',
             'field' => 'slug',
-            'terms' => sanitize_title($_GET['fp_type']),
+            'terms' => sanitize_title($request['fp_type']),
         ];
     }
 
-    if (!empty($_GET['fp_features']) && is_array($_GET['fp_features'])) {
+    if (!empty($request['fp_features']) && is_array($request['fp_features'])) {
         // One clause per feature (relation AND) so a property must have
         // every checked feature, not just any one of them.
-        foreach ($_GET['fp_features'] as $featureSlug) {
+        foreach ($request['fp_features'] as $featureSlug) {
             $taxQuery[] = [
                 'taxonomy' => 'property_feature',
                 'field' => 'slug',
@@ -115,18 +126,49 @@ add_action('pre_get_posts', function (WP_Query $query) {
         }
     }
 
-    if (count($taxQuery) > 1) {
-        $query->set('tax_query', $taxQuery);
+    // A plain term-archive "Load More" request (no filter form on that
+    // page) tells us the term directly instead of via fp_location/fp_type.
+    if (!empty($request['fp_taxonomy']) && !empty($request['fp_term'])) {
+        $taxQuery[] = [
+            'taxonomy' => sanitize_key($request['fp_taxonomy']),
+            'field' => 'slug',
+            'terms' => sanitize_title($request['fp_term']),
+        ];
     }
 
-    $sort = !empty($_GET['fp_sort']) ? sanitize_key($_GET['fp_sort']) : 'newest';
+    if (count($taxQuery) > 1) {
+        $args['tax_query'] = $taxQuery;
+    }
+
+    $sort = !empty($request['fp_sort']) ? sanitize_key($request['fp_sort']) : 'newest';
 
     if ($sort === 'price_low' || $sort === 'price_high') {
-        $query->set('fp_sort_by_price', $sort === 'price_high' ? 'desc' : 'asc');
+        $args['fp_sort_by_price'] = $sort === 'price_high' ? 'desc' : 'asc';
     } elseif ($sort === 'beds_high') {
-        $query->set('meta_key', 'fpc_bedrooms');
-        $query->set('orderby', 'meta_value_num');
-        $query->set('order', 'DESC');
+        $args['meta_key'] = 'fpc_bedrooms';
+        $args['orderby'] = 'meta_value_num';
+        $args['order'] = 'DESC';
+    }
+
+    return $args;
+}
+
+add_action('pre_get_posts', function (WP_Query $query) {
+    if (is_admin() || !$query->is_main_query()) {
+        return;
+    }
+
+    $isPropertyContext = $query->is_post_type_archive('property') || $query->is_tax('location') || $query->is_tax('property_type');
+
+    if (!$isPropertyContext) {
+        return;
+    }
+
+    $args = fp_property_query_args($_GET, 1, !$query->is_tax('location'), !$query->is_tax('property_type'));
+    unset($args['paged']); // the main query already reads the page number from the URL
+
+    foreach ($args as $key => $value) {
+        $query->set($key, $value);
     }
 });
 

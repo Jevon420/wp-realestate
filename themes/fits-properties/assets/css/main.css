@@ -477,6 +477,57 @@ p { margin: 0 0 1em; }
 .fp-post-card__media img { border-radius: var(--fp-radius); margin-bottom: 18px; }
 .fp-post-card__meta { color: var(--fp-text-light); font-size: 0.85rem; }
 
+/* Image loading skeleton: shown until the <img> inside fires onload
+   (see fp_lazy_img_attrs() in inc/helpers.php), then fades out as the
+   image fades in. Works for images inserted later by Load More too,
+   since it's driven by each <img>'s own onload, not a JS observer. */
+.fp-img-wrap {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--fp-bg-muted);
+  overflow: hidden;
+}
+.fp-img-wrap img { opacity: 0; transition: opacity 0.4s ease; }
+.fp-img-wrap.is-loaded img { opacity: 1; }
+.fp-img-wrap:not(.is-loaded)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--fp-border) 25%, #f2ede3 37%, var(--fp-border) 63%);
+  background-size: 400% 100%;
+  animation: fp-shimmer 1.4s ease infinite;
+}
+@keyframes fp-shimmer {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fp-img-wrap:not(.is-loaded)::after { animation: none; }
+}
+
+/* Skeleton placeholder cards shown briefly while "Load More" fetches
+   the next page (see assets/js/load-more.js). */
+.fp-skeleton-card { border: 1px solid var(--fp-border); border-radius: var(--fp-radius); overflow: hidden; background: #fff; }
+.fp-skeleton-card__media { aspect-ratio: 4 / 3; background: var(--fp-bg-muted); position: relative; overflow: hidden; }
+.fp-skeleton-card__media::after,
+.fp-skeleton-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, var(--fp-border) 25%, #f2ede3 37%, var(--fp-border) 63%);
+  background-size: 400% 100%;
+  animation: fp-shimmer 1.4s ease infinite;
+}
+.fp-skeleton-card__body { padding: 22px; }
+.fp-skeleton-line { position: relative; overflow: hidden; height: 12px; border-radius: 3px; background: var(--fp-bg-muted); margin-bottom: 10px; }
+.fp-skeleton-line--title { height: 16px; width: 70%; }
+.fp-skeleton-line--short { width: 45%; }
+
+.fp-load-more { text-align: center; margin-top: 40px; }
+.fp-load-more[hidden] { display: none; }
+
 /* Hover lift for interactive cards */
 .fp-card, .fp-agent-card, .fp-type-card, .fp-testimonial {
   transition: transform 0.25s ease, border-color 0.25s ease;

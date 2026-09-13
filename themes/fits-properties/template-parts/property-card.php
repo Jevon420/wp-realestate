@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 $propertyId = get_the_ID();
 $specs = fp_property_specs($propertyId);
-$listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
+$badge = fp_property_badge($propertyId);
 $imageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'medium_large');
 ?>
 <article class="fp-card fp-animate">
@@ -18,8 +18,8 @@ $imageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'medi
         <?php else : ?>
             <div class="fp-card__media-placeholder"></div>
         <?php endif; ?>
-        <span class="fp-badge fp-badge--<?php echo esc_attr($listingType ?: 'sale'); ?>">
-            <?php echo $listingType === 'rent' ? 'For Rent' : 'For Sale'; ?>
+        <span class="fp-badge fp-badge--<?php echo esc_attr($badge['modifier']); ?>">
+            <?php echo esc_html($badge['label']); ?>
         </span>
     </a>
 

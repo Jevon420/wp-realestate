@@ -275,6 +275,8 @@ p { margin: 0 0 1em; }
   letter-spacing: 0.08em;
 }
 .fp-badge--rent { color: var(--fp-gold-dark); }
+.fp-badge--sold, .fp-badge--rented { background: rgba(26, 22, 19, 0.88); color: #fff; }
+.fp-badge--pending { background: rgba(156, 74, 53, 0.92); color: #fff; }
 
 .fp-card__body { padding: 22px; }
 .fp-card__price { font-family: var(--fp-font-serif); font-weight: 600; color: var(--fp-navy); font-size: 1.2rem; margin-bottom: 4px; }
@@ -472,6 +474,15 @@ body.fp-lightbox-open { overflow: hidden; }
 
 .fp-tag-list { list-style: none; display: flex; flex-wrap: wrap; gap: 10px; padding: 0; }
 .fp-tag-list li { background: var(--fp-bg-muted); border: 1px solid var(--fp-border); padding: 6px 13px; border-radius: var(--fp-radius); font-size: 0.85rem; }
+
+.fp-property-map {
+  height: 320px;
+  margin-top: 16px;
+  border-radius: var(--fp-radius);
+  border: 1px solid var(--fp-border);
+  overflow: hidden;
+  background: var(--fp-bg-muted);
+}
 
 .fp-property-sidebar { display: flex; flex-direction: column; gap: 24px; }
 .fp-agent-mini, .fp-request-form {

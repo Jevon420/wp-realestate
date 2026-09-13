@@ -12,13 +12,15 @@ while (have_posts()) :
     $galleryItems = fp_gallery_items($propertyId);
     $mainImageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'large');
     $specs = fp_property_specs($propertyId);
-    $listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
+    $badge = fp_property_badge($propertyId);
     $features = get_the_terms($propertyId, 'property_feature');
     $agent = fp_agent_for_property($propertyId);
     $address = get_post_meta($propertyId, 'fpc_address_line', true);
     $state = get_post_meta($propertyId, 'fpc_state', true);
     $postalCode = get_post_meta($propertyId, 'fpc_postal_code', true);
     $country = get_post_meta($propertyId, 'fpc_country', true);
+    $latitude = get_post_meta($propertyId, 'fpc_latitude', true);
+    $longitude = get_post_meta($propertyId, 'fpc_longitude', true);
     ?>
 
     <section class="fp-property-gallery">
@@ -50,8 +52,8 @@ while (have_posts()) :
         <div class="fp-container fp-property-layout">
             <div class="fp-property-main">
                 <div class="fp-property-header">
-                    <span class="fp-badge fp-badge--<?php echo esc_attr($listingType ?: 'sale'); ?>">
-                        <?php echo $listingType === 'rent' ? 'For Rent' : 'For Sale'; ?>
+                    <span class="fp-badge fp-badge--<?php echo esc_attr($badge['modifier']); ?>">
+                        <?php echo esc_html($badge['label']); ?>
                     </span>
                     <h1><?php the_title(); ?></h1>
                     <p class="fp-property-location"><?php echo esc_html(fp_property_location_label($propertyId)); ?></p>
@@ -89,6 +91,9 @@ while (have_posts()) :
                             <?php if ($postalCode) { echo ' ' . esc_html($postalCode); } ?>
                             <?php if ($country) { echo '<br>' . esc_html($country); } ?>
                         </p>
+                        <?php if ($latitude !== '' && $longitude !== '') : ?>
+                            <div id="fp-property-map" class="fp-property-map" data-lat="<?php echo esc_attr($latitude); ?>" data-lng="<?php echo esc_attr($longitude); ?>"></div>
+                        <?php endif; ?>
                     </div>
                 <?php endif; ?>
             </div>
@@ -134,6 +139,25 @@ while (have_posts()) :
             </aside>
         </div>
     </section>
+
+    <?php $related = fp_get_related_properties($propertyId, 3); ?>
+    <?php if ($related->have_posts()) : ?>
+        <section class="fp-section fp-section--muted">
+            <div class="fp-container">
+                <div class="fp-section__head fp-animate">
+                    <div>
+                        <span class="fp-eyebrow">You Might Also Like</span>
+                        <h2>Similar Properties</h2>
+                    </div>
+                </div>
+                <div class="fp-grid fp-grid--3">
+                    <?php while ($related->have_posts()) : $related->the_post(); ?>
+                        <?php get_template_part('template-parts/property-card'); ?>
+                    <?php endwhile; wp_reset_postdata(); ?>
+                </div>
+            </div>
+        </section>
+    <?php endif; ?>
 
 <?php endwhile; ?>
 

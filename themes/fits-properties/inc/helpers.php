@@ -31,6 +31,29 @@ function fp_property_price_label($postId)
     return $price ?: 'Price on request';
 }
 
+/**
+ * A property's status (Sold/Rented/Pending) takes priority over its plain
+ * Sale/Rent listing type for badge display — visitors should see "Sold"
+ * before "For Sale" on a property that's no longer available.
+ */
+function fp_property_badge($postId)
+{
+    $status = get_post_meta($postId, 'fpc_status', true) ?: 'active';
+
+    if ($status !== 'active') {
+        $labels = ['pending' => 'Pending', 'sold' => 'Sold', 'rented' => 'Rented'];
+
+        return ['label' => $labels[$status] ?? ucfirst($status), 'modifier' => $status];
+    }
+
+    $listingType = get_post_meta($postId, 'fpc_listing_type', true);
+
+    return [
+        'label' => $listingType === 'rent' ? 'For Rent' : 'For Sale',
+        'modifier' => $listingType === 'rent' ? 'rent' : 'sale',
+    ];
+}
+
 function fp_property_gallery_ids($postId)
 {
     $ids = get_post_meta($postId, 'fpc_gallery', true);
@@ -142,6 +165,22 @@ function fp_wrap_img($html)
  * Featured Image, falls back to a pasted image URL (fpc_featured_image_url
  * for properties, fpc_photo_url for agents), or '' if neither is set.
  */
+/**
+ * Same fallback logic as fp_featured_image_html() (Featured Image, else
+ * the pasted URL field) but returns a plain URL string — for use in meta
+ * tags (og:image) rather than rendered <img> markup.
+ */
+function fp_featured_image_url($postId, $urlMetaKey, $size = 'large')
+{
+    if (has_post_thumbnail($postId)) {
+        $url = get_the_post_thumbnail_url($postId, $size);
+
+        return $url ?: '';
+    }
+
+    return get_post_meta($postId, $urlMetaKey, true);
+}
+
 function fp_featured_image_html($postId, $urlMetaKey, $size = 'large', $attrs = [])
 {
     $attrs = fp_lazy_img_attrs($attrs);

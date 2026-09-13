@@ -38,10 +38,13 @@
             return;
         }
 
-        setCookie(COOKIE_NAME, button.getAttribute('data-fpc-consent'), COOKIE_DAYS);
+        var consent = button.getAttribute('data-fpc-consent');
+        setCookie(COOKIE_NAME, consent, COOKIE_DAYS);
         banner.classList.remove('is-visible');
         window.setTimeout(function () {
             banner.hidden = true;
         }, 300);
+
+        document.dispatchEvent(new CustomEvent('fpcCookieConsent', { detail: { consent: consent } }));
     });
 })();

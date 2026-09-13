@@ -80,6 +80,7 @@ class MetaBoxes
         $listingType = $this->meta($post->ID, 'fpc_listing_type', 'sale');
         $agentId = (int) $this->meta($post->ID, 'fpc_agent_id');
         $featured = (bool) $this->meta($post->ID, 'fpc_is_featured');
+        $status = $this->meta($post->ID, 'fpc_status', 'active');
 
         $agents = get_posts(['post_type' => 'agent', 'posts_per_page' => -1, 'orderby' => 'title', 'order' => 'ASC']);
         ?>
@@ -111,6 +112,17 @@ class MetaBoxes
                             <span>For Rent</span>
                         </label>
                     </fieldset>
+                </td>
+            </tr>
+            <tr>
+                <th><label for="fpc_status">Status</label></th>
+                <td>
+                    <select name="fpc_status" id="fpc_status">
+                        <?php foreach (['active' => 'Active', 'pending' => 'Pending / Under Contract', 'sold' => 'Sold', 'rented' => 'Rented'] as $value => $label) : ?>
+                            <option value="<?php echo esc_attr($value); ?>" <?php selected($status, $value); ?>><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <p class="description">Sold/Rented/Pending listings stay on the site (good for showing your track record) but display a status ribbon instead of the usual "For Sale/Rent" badge.</p>
                 </td>
             </tr>
             <tr class="fpc-when-sale">
@@ -395,7 +407,7 @@ class MetaBoxes
             update_post_meta($postId, 'fpc_agent_id', (int) $_POST['fpc_agent_id']);
         }
 
-        foreach (['fpc_listing_type', 'fpc_rental_frequency'] as $field) {
+        foreach (['fpc_listing_type', 'fpc_rental_frequency', 'fpc_status'] as $field) {
             if (isset($_POST[$field])) {
                 update_post_meta($postId, $field, sanitize_key($_POST[$field]));
             }

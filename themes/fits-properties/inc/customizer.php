@@ -93,6 +93,17 @@ add_action('customize_register', function ($wp_customize) {
         'section' => 'fp_contact_info',
         'type' => 'text',
     ]);
+
+    $wp_customize->add_setting('fp_currency_code', [
+        'default' => 'USD',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport' => 'refresh',
+    ]);
+    $wp_customize->add_control('fp_currency_code', [
+        'label' => 'Currency Code (for search engine listings, e.g. USD, TTD, GBP)',
+        'section' => 'fp_contact_info',
+        'type' => 'text',
+    ]);
 });
 
 /**

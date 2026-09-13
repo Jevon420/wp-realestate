@@ -17,6 +17,15 @@ add_action('wp_enqueue_scripts', function () {
 
     if (is_singular('property')) {
         wp_enqueue_script('fp-lightbox', FP_THEME_URI . '/assets/js/lightbox.js', [], FP_THEME_VERSION, true);
+
+        $lat = get_post_meta(get_the_ID(), 'fpc_latitude', true);
+        $lng = get_post_meta(get_the_ID(), 'fpc_longitude', true);
+
+        if ($lat !== '' && $lng !== '') {
+            wp_enqueue_style('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', [], '1.9.4');
+            wp_enqueue_script('leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', [], '1.9.4', true);
+            wp_enqueue_script('fp-map', FP_THEME_URI . '/assets/js/map.js', ['leaflet'], FP_THEME_VERSION, true);
+        }
     }
 
     $isPropertyListing = is_post_type_archive('property') || is_tax('location') || is_tax('property_type');

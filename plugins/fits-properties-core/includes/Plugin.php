@@ -13,6 +13,8 @@ use FitsPropertiesCore\Admin\SetupPage;
 use FitsPropertiesCore\Admin\HelpTabs;
 use FitsPropertiesCore\Frontend\ContactForm;
 use FitsPropertiesCore\Frontend\CookieConsent;
+use FitsPropertiesCore\Frontend\Analytics;
+use FitsPropertiesCore\Email\SmtpMailer;
 use FitsPropertiesCore\Updates\UpdateChecker;
 use FitsPropertiesCore\Updates\ContentMigration;
 
@@ -44,6 +46,8 @@ class Plugin
         (new ContactInbox())->register();
         (new ContactForm())->register();
         (new CookieConsent())->register();
+        (new Analytics())->register();
+        (new SmtpMailer())->register();
         (new SetupPage())->register();
         (new HelpTabs())->register();
         (new UpdateChecker())->register();

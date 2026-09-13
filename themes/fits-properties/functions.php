@@ -15,4 +15,5 @@ require_once FP_THEME_DIR . '/inc/queries.php';
 require_once FP_THEME_DIR . '/inc/archive-filters.php';
 require_once FP_THEME_DIR . '/inc/ajax-load-more.php';
 require_once FP_THEME_DIR . '/inc/customizer.php';
+require_once FP_THEME_DIR . '/inc/seo.php';
 require_once FP_THEME_DIR . '/inc/updates.php';

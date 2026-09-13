@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Fits Properties Core
  * Description: Custom post types, taxonomies, and meta fields for the Fits Properties real estate site.
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Fits Properties
  * Text Domain: fits-properties-core
  */

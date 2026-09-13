@@ -71,6 +71,67 @@ function fp_get_property_features()
     ]);
 }
 
+/**
+ * Properties sharing a Property Type or Location with the given one,
+ * topped up with the latest properties if there aren't enough matches.
+ */
+function fp_get_related_properties($postId, $count = 3)
+{
+    $excludeIds = [$postId];
+    $found = [];
+
+    $typeTerms = wp_get_post_terms($postId, 'property_type', ['fields' => 'ids']);
+    $locationTerms = wp_get_post_terms($postId, 'location', ['fields' => 'ids']);
+
+    if (!empty($typeTerms) || !empty($locationTerms)) {
+        $taxQuery = ['relation' => 'OR'];
+
+        if (!empty($typeTerms)) {
+            $taxQuery[] = ['taxonomy' => 'property_type', 'field' => 'term_id', 'terms' => $typeTerms];
+        }
+        if (!empty($locationTerms)) {
+            $taxQuery[] = ['taxonomy' => 'location', 'field' => 'term_id', 'terms' => $locationTerms];
+        }
+
+        $matches = get_posts([
+            'post_type' => 'property',
+            'posts_per_page' => $count,
+            'post__not_in' => $excludeIds,
+            'tax_query' => $taxQuery,
+            'fields' => 'ids',
+        ]);
+
+        $found = array_merge($found, $matches);
+        $excludeIds = array_merge($excludeIds, $matches);
+    }
+
+    if (count($found) < $count) {
+        $topUp = get_posts([
+            'post_type' => 'property',
+            'posts_per_page' => $count - count($found),
+            'post__not_in' => $excludeIds,
+            'orderby' => 'date',
+            'order' => 'DESC',
+            'fields' => 'ids',
+        ]);
+
+        $found = array_merge($found, $topUp);
+    }
+
+    if (empty($found)) {
+        // WP_Query with an empty post__in would ignore it and return
+        // everything, so return an empty result explicitly instead.
+        return new WP_Query(['post__in' => [0]]);
+    }
+
+    return new WP_Query([
+        'post_type' => 'property',
+        'post__in' => $found,
+        'orderby' => 'post__in',
+        'posts_per_page' => $count,
+    ]);
+}
+
 function fp_get_agents($count = -1)
 {
     return new WP_Query([

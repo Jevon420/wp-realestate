@@ -477,6 +477,48 @@ p { margin: 0 0 1em; }
 .fp-post-card__media img { border-radius: var(--fp-radius); margin-bottom: 18px; }
 .fp-post-card__meta { color: var(--fp-text-light); font-size: 0.85rem; }
 
+/* Hover lift for interactive cards */
+.fp-card, .fp-agent-card, .fp-type-card, .fp-testimonial {
+  transition: transform 0.25s ease, border-color 0.25s ease;
+}
+.fp-card:hover, .fp-agent-card:hover, .fp-type-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--fp-gold);
+}
+
+/* Scroll-reveal: only runs with JS present (assets/js/animate.js adds
+   .fp-js to <html> before paint) and only for visitors who haven't asked
+   for reduced motion. Without JS or with reduced motion, content is
+   simply visible immediately — no broken/invisible states either way. */
+.fp-js .fp-animate {
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .fp-js .fp-animate {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  .fp-js .fp-animate.fp-in-view {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fp-grid .fp-animate:nth-child(1) { transition-delay: 0s; }
+  .fp-grid .fp-animate:nth-child(2) { transition-delay: 0.08s; }
+  .fp-grid .fp-animate:nth-child(3) { transition-delay: 0.16s; }
+  .fp-grid .fp-animate:nth-child(4) { transition-delay: 0.24s; }
+  .fp-grid .fp-animate:nth-child(5) { transition-delay: 0.32s; }
+  .fp-grid .fp-animate:nth-child(6) { transition-delay: 0.4s; }
+
+  /* Page headers are always above the fold, so a plain load-in animation
+     (no scroll observer needed) covers every archive/single/page template
+     that uses .fp-page-header without editing each one individually. */
+  .fp-page-header .fp-container { animation: fp-fade-up 0.7s ease both; }
+  @keyframes fp-fade-up {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
 /* Footer */
 .fp-footer { background: var(--fp-navy-dark); color: #b9b0a5; padding: 56px 0 0; }
 .fp-footer__inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; padding-bottom: 36px; }

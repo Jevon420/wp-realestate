@@ -55,7 +55,7 @@ while (have_posts()) :
 
     <section class="fp-section">
         <div class="fp-container">
-            <div class="fp-property-description">
+            <div class="fp-property-description fp-animate">
                 <?php echo fp_rich_text($agentId, 'fpc_bio'); ?>
             </div>
         </div>
@@ -64,7 +64,7 @@ while (have_posts()) :
     <?php if ($listings->have_posts()) : ?>
         <section class="fp-section fp-section--muted">
             <div class="fp-container">
-                <div class="fp-section__head">
+                <div class="fp-section__head fp-animate">
                     <h2>Listings by <?php the_title(); ?></h2>
                 </div>
                 <div class="fp-grid fp-grid--3">

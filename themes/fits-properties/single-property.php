@@ -65,13 +65,13 @@ while (have_posts()) :
                     <?php if ($specs['garage'] !== '') : ?><li><strong><?php echo esc_html($specs['garage']); ?></strong> Garage</li><?php endif; ?>
                 </ul>
 
-                <div class="fp-property-description">
+                <div class="fp-property-description fp-animate">
                     <h2>Description</h2>
                     <?php echo fp_rich_text($propertyId, 'fpc_description'); ?>
                 </div>
 
                 <?php if (!empty($features) && !is_wp_error($features)) : ?>
-                    <div class="fp-property-features">
+                    <div class="fp-property-features fp-animate">
                         <h2>Features &amp; Amenities</h2>
                         <ul class="fp-tag-list">
                             <?php foreach ($features as $feature) : ?>
@@ -82,7 +82,7 @@ while (have_posts()) :
                 <?php endif; ?>
 
                 <?php if ($address) : ?>
-                    <div class="fp-property-address">
+                    <div class="fp-property-address fp-animate">
                         <h2>Location</h2>
                         <p>
                             <?php echo esc_html($address); ?><?php if ($state) { echo ', ' . esc_html($state); } ?>
@@ -95,7 +95,7 @@ while (have_posts()) :
 
             <aside class="fp-property-sidebar">
                 <?php if ($agent) : ?>
-                    <div class="fp-agent-mini">
+                    <div class="fp-agent-mini fp-animate">
                         <?php echo fp_featured_image_html($agent->ID, 'fpc_photo_url', 'thumbnail'); ?>
                         <h3><a href="<?php echo esc_url(get_permalink($agent)); ?>"><?php echo esc_html($agent->post_title); ?></a></h3>
                         <?php $phone = get_post_meta($agent->ID, 'fpc_phone', true); ?>
@@ -103,7 +103,7 @@ while (have_posts()) :
                     </div>
                 <?php endif; ?>
 
-                <div class="fp-request-form">
+                <div class="fp-request-form fp-animate">
                     <h3>Request a Viewing</h3>
                     <?php if (isset($_GET['fp_contact']) && $_GET['fp_contact'] === 'success') : ?>
                         <p class="fp-form-success">Thanks! We'll be in touch shortly.</p>

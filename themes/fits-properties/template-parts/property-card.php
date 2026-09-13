@@ -11,7 +11,7 @@ $specs = fp_property_specs($propertyId);
 $listingType = get_post_meta($propertyId, 'fpc_listing_type', true);
 $imageHtml = fp_featured_image_html($propertyId, 'fpc_featured_image_url', 'medium_large');
 ?>
-<article class="fp-card">
+<article class="fp-card fp-animate">
     <a class="fp-card__media" href="<?php the_permalink(); ?>">
         <?php if ($imageHtml) : ?>
             <?php echo $imageHtml; ?>

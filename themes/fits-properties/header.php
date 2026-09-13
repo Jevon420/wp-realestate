@@ -4,6 +4,7 @@
 <head>
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>document.documentElement.classList.add('fp-js');</script>
     <?php wp_head(); ?>
 </head>
 <body <?php body_class(); ?>>

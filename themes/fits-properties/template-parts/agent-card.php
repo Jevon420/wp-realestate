@@ -8,7 +8,7 @@ $phone = get_post_meta($agentId, 'fpc_phone', true);
 $specialization = get_post_meta($agentId, 'fpc_specialization', true);
 $imageHtml = fp_featured_image_html($agentId, 'fpc_photo_url', 'medium');
 ?>
-<article class="fp-agent-card">
+<article class="fp-agent-card fp-animate">
     <a class="fp-agent-card__media" href="<?php the_permalink(); ?>">
         <?php if ($imageHtml) : ?>
             <?php echo $imageHtml; ?>

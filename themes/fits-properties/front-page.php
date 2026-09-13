@@ -12,7 +12,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
 ?>
 
 <section class="fp-hero <?php echo $heroImage ? 'fp-hero--photo' : ''; ?>" <?php echo $heroImage ? 'style="background-image:url(' . esc_url($heroImage) . ')"' : ''; ?>>
-    <div class="fp-container fp-hero__inner">
+    <div class="fp-container fp-hero__inner fp-animate">
         <span class="fp-eyebrow">Real Estate</span>
         <h1>Find Your Next Property with <?php bloginfo('name'); ?></h1>
         <p>Browse homes, apartments and commercial spaces for sale and rent.</p>
@@ -32,7 +32,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
 <?php if ($featured->have_posts()) : ?>
     <section class="fp-section">
         <div class="fp-container">
-            <div class="fp-section__head">
+            <div class="fp-section__head fp-animate">
                 <div>
                     <span class="fp-eyebrow">Curated Listings</span>
                     <h2>Featured Properties</h2>
@@ -51,7 +51,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
 <?php if (!empty($propertyTypes) && !is_wp_error($propertyTypes)) : ?>
     <section class="fp-section fp-section--muted">
         <div class="fp-container">
-            <div class="fp-section__head">
+            <div class="fp-section__head fp-animate">
                 <div>
                     <span class="fp-eyebrow">Explore</span>
                     <h2>Browse by Property Type</h2>
@@ -59,7 +59,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
             </div>
             <div class="fp-grid fp-grid--4">
                 <?php foreach ($propertyTypes as $type) : ?>
-                    <a class="fp-type-card" href="<?php echo esc_url(get_term_link($type)); ?>">
+                    <a class="fp-type-card fp-animate" href="<?php echo esc_url(get_term_link($type)); ?>">
                         <span><?php echo esc_html($type->name); ?></span>
                         <small><?php echo esc_html($type->count); ?> Listings</small>
                     </a>
@@ -72,7 +72,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
 <?php if ($testimonials->have_posts()) : ?>
     <section class="fp-section">
         <div class="fp-container">
-            <div class="fp-section__head">
+            <div class="fp-section__head fp-animate">
                 <div>
                     <span class="fp-eyebrow">Testimonials</span>
                     <h2>What Our Clients Say</h2>
@@ -88,7 +88,7 @@ $heroImage = get_theme_mod('fp_hero_image', '');
 <?php endif; ?>
 
 <section class="fp-cta">
-    <div class="fp-container fp-cta__inner">
+    <div class="fp-container fp-cta__inner fp-animate">
         <h2>Ready to find your next home?</h2>
         <p>Talk to one of our agents today.</p>
         <a class="fp-btn fp-btn--light" href="<?php echo esc_url(home_url('/contact/')); ?>">Contact Us</a>

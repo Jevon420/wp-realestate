@@ -14,6 +14,22 @@ add_action('after_setup_theme', function () {
 });
 
 add_action('customize_register', function ($wp_customize) {
+    $wp_customize->add_section('fp_homepage', [
+        'title' => 'Homepage Hero',
+        'priority' => 24,
+        'description' => 'Optional photo for the homepage banner. Leave empty to keep the current plain text-only look.',
+    ]);
+
+    $wp_customize->add_setting('fp_hero_image', [
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'transport' => 'refresh',
+    ]);
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'fp_hero_image', [
+        'label' => 'Hero Background Photo',
+        'section' => 'fp_homepage',
+    ]));
+
     $wp_customize->add_section('fp_brand_colors', [
         'title' => 'Brand Colors',
         'priority' => 25,

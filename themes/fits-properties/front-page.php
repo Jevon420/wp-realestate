@@ -8,9 +8,10 @@ get_header();
 $featured = fp_get_featured_properties(6);
 $propertyTypes = fp_get_property_types(6);
 $testimonials = fp_get_testimonials(3);
+$heroImage = get_theme_mod('fp_hero_image', '');
 ?>
 
-<section class="fp-hero">
+<section class="fp-hero <?php echo $heroImage ? 'fp-hero--photo' : ''; ?>" <?php echo $heroImage ? 'style="background-image:url(' . esc_url($heroImage) . ')"' : ''; ?>>
     <div class="fp-container fp-hero__inner">
         <span class="fp-eyebrow">Real Estate</span>
         <h1>Find Your Next Property with <?php bloginfo('name'); ?></h1>

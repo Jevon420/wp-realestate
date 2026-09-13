@@ -6,7 +6,10 @@ if (!defined('ABSPATH')) {
 get_header();
 
 $locations = fp_get_top_level_locations();
+$cities = fp_get_cities();
 $types = fp_get_property_types(20);
+$features = fp_get_property_features();
+$archiveLink = get_post_type_archive_link('property');
 ?>
 
 <section class="fp-page-header">
@@ -22,6 +25,24 @@ $types = fp_get_property_types(20);
                 <div class="fp-filters__group">
                     <label for="fp-filter-s">Keyword</label>
                     <input type="text" id="fp-filter-s" name="s" value="<?php echo esc_attr(get_search_query()); ?>">
+                </div>
+
+                <div class="fp-filters__group">
+                    <label for="fp-filter-sort">Sort By</label>
+                    <select id="fp-filter-sort" name="fp_sort">
+                        <?php
+                        $sortOptions = [
+                            'newest' => 'Newest',
+                            'price_low' => 'Price: Low to High',
+                            'price_high' => 'Price: High to Low',
+                            'beds_high' => 'Most Bedrooms',
+                        ];
+                        $currentSort = $_GET['fp_sort'] ?? 'newest';
+                        foreach ($sortOptions as $value => $label) :
+                        ?>
+                            <option value="<?php echo esc_attr($value); ?>" <?php selected($currentSort, $value); ?>><?php echo esc_html($label); ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="fp-filters__group">
@@ -61,6 +82,20 @@ $types = fp_get_property_types(20);
                     </div>
                 <?php endif; ?>
 
+                <?php if (!empty($cities)) : ?>
+                    <div class="fp-filters__group">
+                        <label for="fp-filter-city">City</label>
+                        <select id="fp-filter-city" name="fp_city">
+                            <option value="">Any</option>
+                            <?php foreach ($cities as $city) : ?>
+                                <option value="<?php echo esc_attr($city->slug); ?>" <?php selected($_GET['fp_city'] ?? '', $city->slug); ?>>
+                                    <?php echo esc_html($city->name); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                <?php endif; ?>
+
                 <div class="fp-filters__group fp-filters__group--split">
                     <div>
                         <label for="fp-filter-min">Min Price</label>
@@ -72,12 +107,59 @@ $types = fp_get_property_types(20);
                     </div>
                 </div>
 
+                <details class="fp-filters__more" <?php echo (!empty($_GET['fp_min_beds']) || !empty($_GET['fp_min_baths']) || !empty($_GET['fp_furnished']) || !empty($_GET['fp_features'])) ? 'open' : ''; ?>>
+                    <summary>More Filters</summary>
+
+                    <div class="fp-filters__group fp-filters__group--split">
+                        <div>
+                            <label for="fp-filter-beds">Min Beds</label>
+                            <select id="fp-filter-beds" name="fp_min_beds">
+                                <option value="">Any</option>
+                                <?php foreach ([1, 2, 3, 4, 5] as $n) : ?>
+                                    <option value="<?php echo $n; ?>" <?php selected($_GET['fp_min_beds'] ?? '', (string) $n); ?>><?php echo $n; ?>+</option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="fp-filter-baths">Min Baths</label>
+                            <select id="fp-filter-baths" name="fp_min_baths">
+                                <option value="">Any</option>
+                                <?php foreach ([1, 2, 3, 4] as $n) : ?>
+                                    <option value="<?php echo $n; ?>" <?php selected($_GET['fp_min_baths'] ?? '', (string) $n); ?>><?php echo $n; ?>+</option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="fp-filters__group">
+                        <label class="fp-filters__checkbox">
+                            <input type="checkbox" name="fp_furnished" value="1" <?php checked(!empty($_GET['fp_furnished'])); ?>>
+                            Furnished only
+                        </label>
+                    </div>
+
+                    <?php if (!empty($features) && !is_wp_error($features)) : ?>
+                        <div class="fp-filters__group">
+                            <label>Features</label>
+                            <?php $selectedFeatures = $_GET['fp_features'] ?? []; ?>
+                            <?php foreach ($features as $feature) : ?>
+                                <label class="fp-filters__checkbox">
+                                    <input type="checkbox" name="fp_features[]" value="<?php echo esc_attr($feature->slug); ?>" <?php checked(in_array($feature->slug, (array) $selectedFeatures, true)); ?>>
+                                    <?php echo esc_html($feature->name); ?>
+                                </label>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </details>
+
                 <button type="submit" class="fp-btn fp-btn--primary fp-filters__submit">Apply Filters</button>
+                <a class="fp-filters__clear" href="<?php echo esc_url($archiveLink); ?>">Clear all filters</a>
             </form>
         </aside>
 
         <div class="fp-listing__results">
             <?php if (have_posts()) : ?>
+                <p class="fp-listing__count"><?php echo esc_html($wp_query->found_posts); ?> propert<?php echo $wp_query->found_posts === 1 ? 'y' : 'ies'; ?> found</p>
                 <div class="fp-grid fp-grid--3">
                     <?php while (have_posts()) : the_post(); ?>
                         <?php get_template_part('template-parts/property-card'); ?>

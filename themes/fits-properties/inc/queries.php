@@ -45,6 +45,32 @@ function fp_get_top_level_locations()
     ]);
 }
 
+/**
+ * Cities are the child terms of the "location" taxonomy (a Zone is the
+ * parent, its Cities are children) — this returns just the cities,
+ * across all zones, each labeled with its parent zone's name.
+ */
+function fp_get_cities()
+{
+    $all = get_terms(['taxonomy' => 'location', 'hide_empty' => false]);
+
+    if (is_wp_error($all)) {
+        return [];
+    }
+
+    return array_values(array_filter($all, function ($term) {
+        return $term->parent !== 0;
+    }));
+}
+
+function fp_get_property_features()
+{
+    return get_terms([
+        'taxonomy' => 'property_feature',
+        'hide_empty' => false,
+    ]);
+}
+
 function fp_get_agents($count = -1)
 {
     return new WP_Query([

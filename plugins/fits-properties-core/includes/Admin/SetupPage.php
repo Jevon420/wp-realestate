@@ -235,7 +235,12 @@ class SetupPage
 
                 <div class="fpc-setup-card">
                     <h2>2. Look &amp; Feel</h2>
-                    <p>Change the site's colors, upload a logo, and set the phone number/email shown in the footer and contact page.</p>
+                    <p>
+                        Change the site's colors, upload a logo, set the phone number/email shown in the footer and contact page,
+                        and add background photos for the homepage and the Properties/Agents pages. Individual Pages (About,
+                        Contact, etc.) use their own Featured Image for this, and Property Type/Location archives have a
+                        "Header Image" field when editing that term.
+                    </p>
                     <a class="button button-secondary" href="<?php echo esc_url(admin_url('customize.php')); ?>">Open Customizer</a>
                 </div>
 

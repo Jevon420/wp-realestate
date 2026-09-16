@@ -7,8 +7,10 @@ get_header();
 
 while (have_posts()) :
     the_post();
+    $headerImage = has_post_thumbnail() ? get_the_post_thumbnail_url(get_the_ID(), 'large') : '';
+    $header = fp_page_header_attrs($headerImage);
     ?>
-    <section class="fp-page-header">
+    <section class="<?php echo esc_attr($header['class']); ?>"<?php echo $header['style']; ?>>
         <div class="fp-container">
             <h1><?php the_title(); ?></h1>
         </div>

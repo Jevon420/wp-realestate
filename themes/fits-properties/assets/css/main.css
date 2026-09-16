@@ -320,6 +320,23 @@ p { margin: 0 0 1em; }
 .fp-page-header h1 { color: var(--fp-navy); margin-bottom: 0; }
 .fp-page-header p { color: var(--fp-text-light); margin-top: 10px; margin-bottom: 0; }
 
+.fp-page-header--photo {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  border-bottom: none;
+  padding: 88px 0;
+}
+.fp-page-header--photo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(26, 22, 19, 0.58);
+}
+.fp-page-header--photo .fp-container { position: relative; z-index: 1; }
+.fp-page-header--photo h1 { color: #fff; }
+.fp-page-header--photo p { color: rgba(255, 255, 255, 0.85); }
+
 /* Grid */
 .fp-grid { display: grid; gap: 28px; }
 .fp-grid--3 { grid-template-columns: repeat(3, 1fr); }

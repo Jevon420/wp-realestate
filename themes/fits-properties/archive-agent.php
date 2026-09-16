@@ -4,9 +4,10 @@ if (!defined('ABSPATH')) {
 }
 
 get_header();
+$header = fp_page_header_attrs(get_theme_mod('fp_agents_header_image', ''));
 ?>
 
-<section class="fp-page-header">
+<section class="<?php echo esc_attr($header['class']); ?>"<?php echo $header['style']; ?>>
     <div class="fp-container">
         <h1>Our Agents</h1>
     </div>

@@ -10,9 +10,10 @@ $cities = fp_get_cities();
 $types = fp_get_property_types(20);
 $features = fp_get_property_features();
 $archiveLink = get_post_type_archive_link('property');
+$header = fp_page_header_attrs(get_theme_mod('fp_properties_header_image', ''));
 ?>
 
-<section class="fp-page-header">
+<section class="<?php echo esc_attr($header['class']); ?>"<?php echo $header['style']; ?>>
     <div class="fp-container">
         <h1>Properties</h1>
     </div>

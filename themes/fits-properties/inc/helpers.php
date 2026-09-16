@@ -257,3 +257,20 @@ function fp_gallery_item_full_url($item)
 
     return $item['url'];
 }
+
+/**
+ * The class + inline style attribute for a .fp-page-header section, given
+ * an optional background photo URL — shared by every archive/page/taxonomy
+ * template so the "photo header" treatment stays identical everywhere.
+ */
+function fp_page_header_attrs($imageUrl)
+{
+    if (!$imageUrl) {
+        return ['class' => 'fp-page-header', 'style' => ''];
+    }
+
+    return [
+        'class' => 'fp-page-header fp-page-header--photo',
+        'style' => ' style="background-image:url(' . esc_url($imageUrl) . ')"',
+    ];
+}

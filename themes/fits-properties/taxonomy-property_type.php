@@ -6,9 +6,12 @@ if (!defined('ABSPATH')) {
 get_header();
 
 $term = get_queried_object();
+$headerImageId = get_term_meta($term->term_id, 'fpc_term_image', true);
+$headerImage = $headerImageId ? wp_get_attachment_image_url($headerImageId, 'large') : '';
+$header = fp_page_header_attrs($headerImage);
 ?>
 
-<section class="fp-page-header">
+<section class="<?php echo esc_attr($header['class']); ?>"<?php echo $header['style']; ?>>
     <div class="fp-container">
         <h1><?php echo esc_html($term->name); ?> Properties</h1>
         <?php if ($term->description) : ?><p><?php echo esc_html($term->description); ?></p><?php endif; ?>

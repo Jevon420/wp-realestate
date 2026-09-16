@@ -11,6 +11,7 @@ use FitsPropertiesCore\Admin\AdminAssets;
 use FitsPropertiesCore\Admin\ContactInbox;
 use FitsPropertiesCore\Admin\SetupPage;
 use FitsPropertiesCore\Admin\HelpTabs;
+use FitsPropertiesCore\Admin\TermImage;
 use FitsPropertiesCore\Frontend\ContactForm;
 use FitsPropertiesCore\Frontend\CookieConsent;
 use FitsPropertiesCore\Frontend\Analytics;
@@ -50,6 +51,7 @@ class Plugin
         (new SmtpMailer())->register();
         (new SetupPage())->register();
         (new HelpTabs())->register();
+        (new TermImage())->register();
         (new UpdateChecker())->register();
         (new ContentMigration())->register();
     }

@@ -42,6 +42,32 @@ add_action('customize_register', function ($wp_customize) {
         'type' => 'text',
     ]);
 
+    $wp_customize->add_section('fp_archive_headers', [
+        'title' => 'Page Header Photos',
+        'priority' => 24,
+        'description' => 'Optional background photos for the Properties and Agents listing pages. (Individual pages like About/Contact use their own Featured Image; Property Type and Location archives have their own "Header Image" field when editing that term.)',
+    ]);
+
+    $wp_customize->add_setting('fp_properties_header_image', [
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'transport' => 'refresh',
+    ]);
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'fp_properties_header_image', [
+        'label' => 'Properties Page Header Photo',
+        'section' => 'fp_archive_headers',
+    ]));
+
+    $wp_customize->add_setting('fp_agents_header_image', [
+        'default' => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'transport' => 'refresh',
+    ]);
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'fp_agents_header_image', [
+        'label' => 'Agents Page Header Photo',
+        'section' => 'fp_archive_headers',
+    ]));
+
     $wp_customize->add_section('fp_brand_colors', [
         'title' => 'Brand Colors',
         'priority' => 25,

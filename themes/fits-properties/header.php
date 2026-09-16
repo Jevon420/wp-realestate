@@ -56,7 +56,17 @@
             'theme_location' => 'primary',
             'container' => false,
             'menu_class' => 'fp-mobile-nav__list',
-            'fallback_cb' => false,
+            'fallback_cb' => function () {
+                echo '<ul class="fp-mobile-nav__list">';
+                echo '<li><a href="' . esc_url(home_url('/')) . '">Home</a></li>';
+                echo '<li><a href="' . esc_url(get_post_type_archive_link('property')) . '">Properties</a></li>';
+                echo '<li><a href="' . esc_url(get_post_type_archive_link('agent')) . '">Agents</a></li>';
+                $contact = get_page_by_path('contact');
+                if ($contact) {
+                    echo '<li><a href="' . esc_url(get_permalink($contact)) . '">Contact</a></li>';
+                }
+                echo '</ul>';
+            },
         ]);
         ?>
     </div>

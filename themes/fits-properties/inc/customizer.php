@@ -15,9 +15,9 @@ add_action('after_setup_theme', function () {
 
 add_action('customize_register', function ($wp_customize) {
     $wp_customize->add_section('fp_homepage', [
-        'title' => 'Homepage Hero',
+        'title' => 'Homepage',
         'priority' => 24,
-        'description' => 'Optional photo for the homepage banner. Leave empty to keep the current plain text-only look.',
+        'description' => 'Options for the homepage banner and stats bar.',
     ]);
 
     $wp_customize->add_setting('fp_hero_image', [
@@ -27,8 +27,20 @@ add_action('customize_register', function ($wp_customize) {
     ]);
     $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'fp_hero_image', [
         'label' => 'Hero Background Photo',
+        'description' => 'Uploading a photo here doesn\'t need to be a fresh shoot — you can also save any property photo already on the site to your computer, then upload that same file here as the hero background.',
         'section' => 'fp_homepage',
     ]));
+
+    $wp_customize->add_setting('fp_years_experience', [
+        'default' => '10',
+        'sanitize_callback' => 'sanitize_text_field',
+        'transport' => 'refresh',
+    ]);
+    $wp_customize->add_control('fp_years_experience', [
+        'label' => 'Years of Experience (shown in the homepage stats bar)',
+        'section' => 'fp_homepage',
+        'type' => 'text',
+    ]);
 
     $wp_customize->add_section('fp_brand_colors', [
         'title' => 'Brand Colors',

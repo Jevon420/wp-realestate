@@ -42,6 +42,10 @@ function fp_get_top_level_locations()
         'taxonomy' => 'location',
         'hide_empty' => false,
         'parent' => 0,
+        // Properties are tagged with a city (child term), not its zone —
+        // pad_counts rolls child-term counts up into the parent so a
+        // zone's count reflects all its cities' properties too.
+        'pad_counts' => true,
     ]);
 }
 

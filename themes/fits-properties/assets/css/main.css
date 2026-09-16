@@ -16,8 +16,9 @@
   --fp-success: #2f6b46;
   --fp-error: #a13a2c;
   --fp-radius: 2px;
-  --fp-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --fp-font: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --fp-font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  --fp-ease: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 * { box-sizing: border-box; }
@@ -31,6 +32,31 @@ body {
   background: var(--fp-bg);
   line-height: 1.65;
   font-size: 16px;
+}
+
+/* Cross-page transitions: native View Transitions API where the browser
+   supports it (Chrome/Edge) — a smooth crossfade between full page loads,
+   no JS involved. Unsupported browsers (Firefox/Safari) just keep their
+   normal instant navigation; there's nothing to feature-detect or fall
+   back from, the rule is simply ignored. */
+@view-transition {
+  navigation: auto;
+}
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.3s;
+  animation-timing-function: var(--fp-ease);
+}
+
+/* Universal fallback so every browser gets some transition feel: a quick
+   fade-in on load, gated behind prefers-reduced-motion like the rest of
+   the site's motion. */
+@media (prefers-reduced-motion: no-preference) {
+  body { animation: fp-page-fade-in 0.35s var(--fp-ease) both; }
+}
+@keyframes fp-page-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 img { max-width: 100%; display: block; }
@@ -78,7 +104,7 @@ p { margin: 0 0 1em; }
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  transition: background 0.2s var(--fp-ease), color 0.2s var(--fp-ease), border-color 0.2s var(--fp-ease);
 }
 .fp-btn--primary { background: var(--fp-navy); color: #fff; }
 .fp-btn--primary:hover { background: var(--fp-navy-dark); }
@@ -92,7 +118,11 @@ p { margin: 0 0 1em; }
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 0 0 rgba(20, 16, 12, 0);
+  transition: box-shadow 0.3s var(--fp-ease);
 }
+.fp-header.is-scrolled { box-shadow: 0 4px 20px rgba(20, 16, 12, 0.06); }
+
 .fp-header__inner {
   display: flex;
   align-items: center;
@@ -105,7 +135,9 @@ p { margin: 0 0 1em; }
   font-weight: 600;
   font-size: 1.4rem;
   letter-spacing: 0.01em;
+  transition: opacity 0.2s var(--fp-ease);
 }
+.fp-logo:hover { opacity: 0.75; }
 .fp-logo--light { color: var(--fp-navy); }
 .fp-logo--image img { max-height: 40px; width: auto; display: block; }
 .fp-nav { flex: 1; }
@@ -117,46 +149,79 @@ p { margin: 0 0 1em; }
   padding: 0;
 }
 .fp-nav__list a {
+  position: relative;
+  display: inline-block;
   color: var(--fp-text);
   font-weight: 500;
   font-size: 0.92rem;
   letter-spacing: 0.02em;
+  padding-bottom: 5px;
+  transition: color 0.2s var(--fp-ease);
+}
+.fp-nav__list a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: var(--fp-gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s var(--fp-ease);
 }
 .fp-nav__list a:hover { color: var(--fp-gold); }
+.fp-nav__list a:hover::after,
+.fp-nav__list .current-menu-item a::after { transform: scaleX(1); }
 .fp-header__cta { white-space: nowrap; }
 
 .fp-nav-toggle {
   display: none;
   flex-direction: column;
-  gap: 4px;
+  justify-content: center;
+  gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 6px;
+  width: 34px;
+  height: 34px;
 }
 .fp-nav-toggle span {
   width: 22px;
-  height: 1px;
+  height: 1.5px;
   background: var(--fp-navy);
   display: block;
+  transition: transform 0.3s var(--fp-ease), opacity 0.2s var(--fp-ease);
 }
+.fp-nav-toggle.is-open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+.fp-nav-toggle.is-open span:nth-child(2) { opacity: 0; }
+.fp-nav-toggle.is-open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
 
 .fp-mobile-nav {
-  display: none;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
   background: var(--fp-bg);
-  border-top: 1px solid var(--fp-border);
-  padding: 8px 20px 16px;
+  border-top: 1px solid transparent;
+  padding: 0 20px;
+  transition: max-height 0.35s var(--fp-ease), opacity 0.25s var(--fp-ease), border-color 0.3s var(--fp-ease);
+}
+.fp-mobile-nav.is-open {
+  max-height: 320px;
+  opacity: 1;
+  border-top-color: var(--fp-border);
 }
 .fp-mobile-nav__list {
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 14px 0 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 }
-.fp-mobile-nav__list a { color: var(--fp-text); }
-.fp-mobile-nav.is-open { display: block; }
+.fp-mobile-nav__list a { color: var(--fp-text); transition: color 0.2s var(--fp-ease); }
+.fp-mobile-nav__list a:hover { color: var(--fp-gold); }
 
 @media (max-width: 860px) {
   .fp-nav, .fp-header__cta { display: none; }
@@ -242,7 +307,7 @@ p { margin: 0 0 1em; }
   margin-bottom: 36px;
 }
 .fp-section__head h2 { margin-bottom: 0; }
-.fp-link { color: var(--fp-gold); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.02em; }
+.fp-link { color: var(--fp-gold); font-weight: 600; font-size: 0.9rem; letter-spacing: 0.02em; transition: color 0.2s var(--fp-ease); }
 .fp-link:hover { color: var(--fp-gold-dark); }
 
 .fp-page-header {
@@ -591,7 +656,7 @@ body.fp-lightbox-open { overflow: hidden; }
   background: var(--fp-bg-muted);
   overflow: hidden;
 }
-.fp-img-wrap img { opacity: 0; transition: opacity 0.4s ease; }
+.fp-img-wrap img { opacity: 0; transition: opacity 0.4s var(--fp-ease); }
 .fp-img-wrap.is-loaded img { opacity: 1; }
 .fp-img-wrap:not(.is-loaded)::after {
   content: "";
@@ -632,11 +697,12 @@ body.fp-lightbox-open { overflow: hidden; }
 
 /* Hover lift for interactive cards */
 .fp-card, .fp-agent-card, .fp-type-card, .fp-testimonial {
-  transition: transform 0.25s ease, border-color 0.25s ease;
+  transition: transform 0.3s var(--fp-ease), border-color 0.3s var(--fp-ease), box-shadow 0.3s var(--fp-ease);
 }
 .fp-card:hover, .fp-agent-card:hover, .fp-type-card:hover {
   transform: translateY(-4px);
   border-color: var(--fp-gold);
+  box-shadow: 0 14px 28px rgba(20, 16, 12, 0.08);
 }
 
 /* Scroll-reveal: only runs with JS present (assets/js/animate.js adds
@@ -644,7 +710,7 @@ body.fp-lightbox-open { overflow: hidden; }
    for reduced motion. Without JS or with reduced motion, content is
    simply visible immediately — no broken/invisible states either way. */
 .fp-js .fp-animate {
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.7s var(--fp-ease), transform 0.7s var(--fp-ease);
 }
 @media (prefers-reduced-motion: no-preference) {
   .fp-js .fp-animate {

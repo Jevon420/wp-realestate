@@ -7,7 +7,7 @@ if (!defined('ABSPATH')) {
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style(
         'fp-fonts',
-        'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&display=swap',
+        'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap',
         [],
         null
     );
